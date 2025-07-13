@@ -18,8 +18,8 @@ def read_csv_file(file_path):
     
     df = pd.read_csv(file_path)
     return df
-
-df = read_csv_file("chicago.csv")
+user_input = input("Enter filename (e.g., chicago.csv): ")
+df = read_csv_file(user_input)
 
 # Print the size of the DataFrame
 print(f"DataFrame size: {df.shape}")
@@ -62,5 +62,5 @@ def save_truncated_csv(df, output_file):
     """
     df.to_csv(output_file, index=False)
     print(f"Truncated DataFrame saved to {output_file}")
-
-save_truncated_csv(df, "chicago2.csv")
+user_input = input("Enter the new filename to save the truncated CSV (e.g., chicago_small.csv): ")
+save_truncated_csv(df, user_input)
