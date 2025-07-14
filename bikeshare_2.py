@@ -7,15 +7,25 @@ CITY_DATA = { 'chicago': 'chicago.csv',
               'new york city': 'new_york_city.csv',
               'washington': 'washington.csv' }
 
-def get_filters():
-    """
-    Asks user to specify a city, month, and day to analyze.
+def list_available_files():
+    ## Lists and return all available CSV files in the current directory.
+    csvfiles = [f for f in os.listdir('.') if os.path.isfile(f) and f.endswith('.csv')]
+    if not csvfiles:
+        raise FileNotFoundError("No CSV files found in the current directory.")
+    print("Available CSV files:")
+    for file in csvfiles:
+        print(file)
+    print("Please select a file from the list of CSV above in the current working directory.")
+    return csvfiles
 
-    Returns:
-        (str) city - name of the city to analyze
-        (str) month - name of the month to filter by, or "all" to apply no month filter
-        (str) day - name of the day of week to filter by, or "all" to apply no day filter
-    """
+
+def get_filters():
+    # Asks user to specify a city, month, and day to analyze.
+    #Returns:
+    #   (str) city - name of the city to analyze
+    #   (str) month - name of the month to filter by, or "all" to apply no month filter
+    #   (str) day - name of the day of week to filter by, or "all" to apply no day filter
+
     print('Hello! Let\'s explore some US bikeshare data!')
     # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
 
@@ -30,18 +40,15 @@ def get_filters():
 
 
 def load_data(city, month, day):
-    """
-    Loads data for the specified city and filters by month and day if applicable.
-
-    Args:
-        (str) city - name of the city to analyze
-        (str) month - name of the month to filter by, or "all" to apply no month filter
-        (str) day - name of the day of week to filter by, or "all" to apply no day filter
-    Returns:
-        df - Pandas DataFrame containing city data filtered by month and day
-    """
-
-
+   # """
+   # Loads data for the specified city and filters by month and day if applicable.
+    #
+    #Args:
+    #   (str) city - name of the city to analyze
+    #   (str) month - name of the month to filter by, or "all" to apply no month filter
+    #   (str) day - name of the day of week to filter by, or "all" to apply no day filter
+    # Returns:
+    #    df - Pandas DataFrame containing city data filtered by month and day
     return df
 
 
@@ -132,6 +139,8 @@ def main():
         if restart.lower() != 'yes':
             break
 
+#Find and list the available CSV files in the current directory
+list_available_files()
 
 if __name__ == "__main__":
 	main()
