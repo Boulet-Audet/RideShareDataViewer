@@ -161,9 +161,11 @@ def user_stats(df):
 
 def main():
     while True:
+        #Find and list the available CSV files in the current directory
         csvfiles = list_available_files()
+        #Get the city, month, and day filters from the user
         cityFile, month, day = get_filters(csvfiles)
-        city, month, day = get_filters()
+        #Load the data based on the user's input
         df = load_data(city, month, day)
 
         time_stats(df)
@@ -175,7 +177,6 @@ def main():
         if restart.lower() != 'yes':
             break
 
-#Find and list the available CSV files in the current directory
 list_available_files()
 
 if __name__ == "__main__":
