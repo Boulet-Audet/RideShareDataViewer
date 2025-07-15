@@ -19,36 +19,70 @@ def list_available_files():
     return csvfiles
 
 
-def get_filters():
+def get_filters(csvfiles):
     # Asks user to specify a city, month, and day to analyze.
     #Returns:
     #   (str) city - name of the city to analyze
     #   (str) month - name of the month to filter by, or "all" to apply no month filter
     #   (str) day - name of the day of week to filter by, or "all" to apply no day filter
 
-    print('Hello! Let\'s explore some US bikeshare data!')
+    print('Explore some US bikeshare data from the CSV files listed above.')
     # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
+    cityFile = input("Please enter the city csv file you want to analyze ").lower()
+    #Adds the .csv extension if it dones't exists
+    if not cityFile.endswith('.csv'):
+        cityFile = cityFile + ".csv"
+    
+    #Check if the city file exists in the current directory
+    if cityFile not in csvfiles:
+        raise ValueError(f"The file {cityFile} is not available in the current directory. Please select from the available files: {csvfiles}")
 
+    #Replace the spaces with underscores
+    cityFile = cityFile.replace(" ", "_")
 
-    # get user input for month (all, january, february, ... , june)
-
+    # get user input for month (all, january, february, ... , december)
+    month = input("Please enter the month you want to analyze (all, january, february, ... , december): ").lower()
 
     # get user input for day of week (all, monday, tuesday, ... sunday)
+    day = input("Please enter the day of the week you want to analyze (all, monday, tuesday, ... sunday): ").lower()
 
-    print('-'*40)
-    return city, month, day
+    return cityFile, month, day
 
 
-def load_data(city, month, day):
-   # """
-   # Loads data for the specified city and filters by month and day if applicable.
-    #
-    #Args:
-    #   (str) city - name of the city to analyze
+def load_data(cityFile, month, day):
+    # Loads data for the specified city and filters by month and day if applicable.
+    #   (str) cityFile - name of the city to analyze
     #   (str) month - name of the month to filter by, or "all" to apply no month filter
     #   (str) day - name of the day of week to filter by, or "all" to apply no day filter
     # Returns:
     #    df - Pandas DataFrame containing city data filtered by month and day
+    df = pd.read_csv(cityFile)
+    df['Start Time'] = pd.to_datetime(df['Start Time'])
+    #Filter out the month if specified except 'all'
+    if month != 'all':
+        months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+        # Convert month name to index from 1 to 12
+        if month not in months:
+            raise ValueError(f"Invalid month: {month}. Please choose from {months}.")
+        # Get the month index (1-12) and filter the DataFrame
+        month_index = months.index(month) + 1
+        df = df[df['Start Time'].dt.month == month_index]
+    #Filter out the day if specified except 'all'
+    if day != 'all':
+        days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+        if day not in days:
+            raise ValueError(f"Invalid day: {day}. Please choose from {days}.")
+        # Get the day index (0-6) and filter the DataFrame
+        day_index = days.index(day)
+        # Convert day name to index from 0 to 6
+        df = df[df['Start Time'].dt.dayofweek]
+        # Filter the DataFrame based on the day index
+        df = df[df['Start Time'] == day_index]
+    #Returns the dataframe after filtering
+    if df.empty:
+        raise ValueError("No data available for the specified filters. Please try different filters.")
+    print(f"Data loaded successfully from {cityFile}.")
+    print(f"DataFrame shape: {df.shape}")
     return df
 
 
@@ -127,6 +161,8 @@ def user_stats(df):
 
 def main():
     while True:
+        csvfiles = list_available_files()
+        cityFile, month, day = get_filters(csvfiles)
         city, month, day = get_filters()
         df = load_data(city, month, day)
 
