@@ -26,9 +26,9 @@ def get_filters(csvfiles):
     #   (str) month - name of the month to filter by, or "all" to apply no month filter
     #   (str) day - name of the day of week to filter by, or "all" to apply no day filter
 
-    print('Explore some US bikeshare data from the CSV files listed above.')
+    # print('Explore some US bikeshare data from the CSV files listed above.')
     # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
-    cityFile = input("Please enter the city csv file you want to analyze ").lower()
+    cityFile = input("Please enter the city csv file you want to analyze from the list above ").lower()
     #Adds the .csv extension if it dones't exists
     if not cityFile.endswith('.csv'):
         cityFile = cityFile + ".csv"
@@ -75,9 +75,9 @@ def load_data(cityFile, month, day):
         # Get the day index (0-6) and filter the DataFrame
         day_index = days.index(day)
         # Convert day name to index from 0 to 6
-        df = df[df['Start Time'].dt.dayofweek]
+        df2 = df['Start Time'].dt.dayofweek
         # Filter the DataFrame based on the day index
-        df = df[df['Start Time'] == day_index]
+        df = df[df['Start Time'].dt.dayofweek == day_index]
     #Returns the dataframe after filtering
     if df.empty:
         raise ValueError("No data available for the specified filters. Please try different filters.")
@@ -166,18 +166,19 @@ def main():
         #Get the city, month, and day filters from the user
         cityFile, month, day = get_filters(csvfiles)
         #Load the data based on the user's input
-        df = load_data(city, month, day)
-
-        time_stats(df)
-        station_stats(df)
-        trip_duration_stats(df)
-        user_stats(df)
+        df = load_data(cityFile, month, day)
+        #Calculate and display the statistics
+        #time_stats(df)
+        #station_stats(df)
+        #trip_duration_stats(df)
+        #user_stats(df)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
             break
 
-list_available_files()
+
 
 if __name__ == "__main__":
+    #Loads the main function to start the program
 	main()
