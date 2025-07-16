@@ -1,6 +1,7 @@
 import time
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import os as os
 
 CITY_DATA = { 'chicago': 'chicago.csv',
@@ -85,25 +86,57 @@ def load_data(cityFile, month, day):
     print(f"DataFrame shape: {df.shape}")
     return df
 
-
 def time_stats(df):
-    """Displays statistics on the most frequent times of travel."""
+    # Displays statistics on the most frequent times of travel.
 
     print('\nCalculating The Most Frequent Times of Travel...\n')
     start_time = time.time()
 
     # display the most common month
-
+    df['month'] = df['Start Time'].dt.month
+    most_common_month = df['month'].mode()[0]
+    print(f"The most common month is: {most_common_month}")
+    #Creates the Figure
+    fig1 = plt.figure(figsize=(10, 6))
+    #Creates a new subplot for the months
+    ax1 = fig1.add_subplot(221)
+    #Plot the histogram of the most common months in the first subplot
+    df['month'].hist(bins=12, edgecolor='black', ax=ax1)
+    ax1.set_title('Months Histogram')
+    ax1.set_ylabel('Frequency')
+    ax1.set_xlabel('Month')
+    ax1.set_xticks(ticks=np.arange(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+    plt.show(block=False)
 
     # display the most common day of week
-
+    df['day_of_week'] = df['Start Time'].dt.day_name()
+    most_common_day = df['day_of_week'].mode()[0]
+    print(f"The most common day of week is: {most_common_day}")
+    #Creates a new graph for the days of the week 
+    ax2 = fig1.add_subplot(222)
+    #Plot the histogram of the most common months
+    df['day_of_week'].value_counts().plot(kind='bar', color='skyblue', edgecolor='black',ax=ax2)
+    # Set the title and labels
+    ax2.set_title('Days of Week Histogram')
+    ax2.set_ylabel('Frequency')
+    ax2.set_xlabel('Day of Week')
+    plt.show(block=False)
 
     # display the most common start hour
-
-
+    df['hour'] = df['Start Time'].dt.hour
+    most_common_hour = df['hour'].mode()[0]
+    print(f"The most common start hour is: {most_common_hour}")
+    #Creates a new graph for the hours
+    ax3 = fig1.add_subplot(223)
+    #Plot the histogram of the most common hours
+    df['hour'].hist(bins=24, edgecolor='black', ax=ax3)
+    ax3.set_title('Hours Histogram')
+    ax3.set_xlabel('Hour of Day')
+    ax3.set_ylabel('Frequency')
+    ax3.set_xticks(ticks=np.arange(0, 24), labels=[f"{i}:00" for i in range(24)])
+    plt.show(block=False)
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print('-'*40)
-
+  
 
 def station_stats(df):
     """Displays statistics on the most popular stations and trip."""
@@ -125,17 +158,31 @@ def station_stats(df):
 
 
 def trip_duration_stats(df):
-    """Displays statistics on the total and average trip duration."""
-
+    #Displays statistics on the total and average trip duration.
     print('\nCalculating Trip Duration...\n')
+    #Start the timer
     start_time = time.time()
 
     # display total travel time
-
+    total_travel_time = df['Trip Duration'].sum() / 3600  # Convert seconds to hours
+    print(f"Total travel time: {total_travel_time:.2f} hours")
 
     # display mean travel time
-
-
+    mean_travel_time = df['Trip Duration'].mean() / 60  # Convert seconds to minutes
+    print(f"Mean travel time: {mean_travel_time:.2f} minutes")
+    #Creates a new figure for the trip duration
+    fig2 = plt.figure(figsize=(10, 6))
+    ax4 = fig2.add_subplot(111)
+    #Plot the histogram of the trip duration wit 30 bins from 0 to the max trip duration
+    max_duration = df['Trip Duration'].max()
+    #Calculate the bin range from zero to triple the mean in to 30bins
+    bin_range = np.linspace(0, mean_travel_time * 3, 30)
+    df['Trip Duration'].hist(bins=bin_range, edgecolor='black', ax=ax4)
+    ax4.set_title('Trip Duration Histogram')
+    ax4.set_xlabel('Trip Duration (seconds)')
+    ax4.set_ylabel('Frequency')
+    plt.show()
+    #End the timer and print the time taken 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
@@ -168,9 +215,9 @@ def main():
         #Load the data based on the user's input
         df = load_data(cityFile, month, day)
         #Calculate and display the statistics
-        #time_stats(df)
+        time_stats(df)
         #station_stats(df)
-        #trip_duration_stats(df)
+        trip_duration_stats(df)
         #user_stats(df)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
