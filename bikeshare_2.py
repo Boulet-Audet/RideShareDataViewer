@@ -4,10 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os as os
 
-CITY_DATA = { 'chicago': 'chicago.csv',
-              'new york city': 'new_york_city.csv',
-              'washington': 'washington.csv' }
-
 def list_available_files():
     ## Lists and return all available CSV files in the current directory.
     csvfiles = [f for f in os.listdir('.') if os.path.isfile(f) and f.endswith('.csv')]
@@ -88,7 +84,6 @@ def load_data(cityFile, month, day):
 
 def time_stats(df):
     # Displays statistics on the most frequent times of travel.
-
     print('\nCalculating The Most Frequent Times of Travel...\n')
     start_time = time.time()
 
@@ -135,26 +130,34 @@ def time_stats(df):
     ax3.set_ylabel('Frequency')
     ax3.set_xticks(ticks=np.arange(0, 24), labels=[f"{i}:00" for i in range(24)])
     plt.show(block=False)
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
+    print('_'*40)
   
 
 def station_stats(df):
-    """Displays statistics on the most popular stations and trip."""
-
+    #Displays statistics on the most popular stations and trip.
     print('\nCalculating The Most Popular Stations and Trip...\n')
+    #Start the timer
     start_time = time.time()
 
     # display most commonly used start station
-
+    start_station_mode0 = df['Start Station'].mode()[0]
+    print(f"The most commonly used start station is: {start_station_mode0}")
 
     # display most commonly used end station
+    end_station_mode0 = df['End Station'].mode()[0]
+    print(f"The most commonly used end station is: {end_station_mode0}")
 
+    #Create a new series in the data frame that combines the start and end stations
+    df['Start to End Station'] = df['Start Station'] + " to " + df['End Station']
 
     # display most frequent combination of start station and end station trip
+    Start_to_end_station_mode0 = df['Start to End Station'].mode()[0]
+    #Print the mode common combination of start to end station
+    print(f"The most common start to end station is: {Start_to_end_station_mode0}")
 
-
-    print("\nThis took %s seconds." % (time.time() - start_time))
-    print('-'*40)
+    print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
+    print('_'*40)
 
 
 def trip_duration_stats(df):
@@ -163,47 +166,64 @@ def trip_duration_stats(df):
     #Start the timer
     start_time = time.time()
 
-    # display total travel time
-    total_travel_time = df['Trip Duration'].sum() / 3600  # Convert seconds to hours
-    print(f"Total travel time: {total_travel_time:.2f} hours")
+    # Sums the total travel time in days and prints it
+    total_travel_time = df['Trip Duration'].sum() / (3600 * 24)  # Convert seconds to days
+    print(f"Total travel time: {total_travel_time:.2f} days")
 
-    # display mean travel time
+    # Calculates and prints the mean travel time
     mean_travel_time = df['Trip Duration'].mean() / 60  # Convert seconds to minutes
     print(f"Mean travel time: {mean_travel_time:.2f} minutes")
+
+    #Calculate and prints the travel time standard deviation in minutes
+    travel_time_std = df['Trip Duration'].std() / 60
+    print(f"Standard deviation of travel time: {travel_time_std:.2f} minutes")
+
     #Creates a new figure for the trip duration
     fig2 = plt.figure(figsize=(10, 6))
     ax4 = fig2.add_subplot(111)
     #Plot the histogram of the trip duration wit 30 bins from 0 to the max trip duration
     max_duration = df['Trip Duration'].max()
     #Calculate the bin range from zero to triple the mean in to 30bins
-    bin_range = np.linspace(0, mean_travel_time * 3, 30)
+    bin_range = np.linspace(0, (mean_travel_time + (3*travel_time_std)) * 60, 30)
     df['Trip Duration'].hist(bins=bin_range, edgecolor='black', ax=ax4)
     ax4.set_title('Trip Duration Histogram')
     ax4.set_xlabel('Trip Duration (seconds)')
     ax4.set_ylabel('Frequency')
     plt.show()
-    #End the timer and print the time taken 
-    print("\nThis took %s seconds." % (time.time() - start_time))
-    print('-'*40)
+    #End the timer and print the time taken
+    print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
+    print('_'*40)
 
 
 def user_stats(df):
-    """Displays statistics on bikeshare users."""
-
+    #Displays statistics on bikeshare users.
     print('\nCalculating User Stats...\n')
     start_time = time.time()
 
     # Display counts of user types
-
+    user_types_value_counts = df['User Type'].value_counts()
+    print(f"Counts of user types: {user_types_value_counts}")
 
     # Display counts of gender
-
+    if 'Gender' in df.columns:
+        gender_value_counts = df['Gender'].value_counts()
+        print(f"Counts of gender: {gender_value_counts}")
+    else:
+        print("Counts of gender: Not available")
 
     # Display earliest, most recent, and most common year of birth
+    if 'Birth Year' in df.columns:
+        earliest_year = int(df['Birth Year'].min())
+        most_recent_year = int(df['Birth Year'].max())
+        most_common_year = int(df['Birth Year'].mode()[0])
+        print(f"Earliest year of birth: {earliest_year}")
+        print(f"Most recent year of birth: {most_recent_year}")
+        print(f"Most common year of birth: {most_common_year}")
+    else:
+        print("No Birth Year data available.")
 
-
-    print("\nThis took %s seconds." % (time.time() - start_time))
-    print('-'*40)
+    print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
+    print('_'*40)
 
 
 def main():
@@ -214,11 +234,16 @@ def main():
         cityFile, month, day = get_filters(csvfiles)
         #Load the data based on the user's input
         df = load_data(cityFile, month, day)
-        #Calculate and display the statistics
+        #Calculate and display the time statistics
         time_stats(df)
-        #station_stats(df)
-        trip_duration_stats(df)
-        #user_stats(df)
+        #Calculate and display the station statistics
+        station_stats(df)
+        #Calculate and display the trip duration statistics
+        if 'Trip Duration' in df.columns:
+            trip_duration_stats(df)
+        #Calculate and display the user statistics
+        if 'User Type' in df.columns:
+            user_stats(df)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
