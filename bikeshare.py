@@ -80,6 +80,20 @@ def load_data(cityFile, month, day):
         raise ValueError("No data available for the specified filters. Please try different filters.")
     print(f"Data loaded successfully from {cityFile}.")
     print(f"DataFrame shape: {df.shape}")
+
+    #Set the head index to 0
+    idx = 0
+    #Prompt the user to display the first 5 rows of the dataframe
+    while True and idx < len(df):
+        display_data = input("Would you like to display the next 5 rows of the dataframe? (yes/no): ").lower()
+        if display_data in ['yes', 'y', 1]:
+            print("Displaying the next 5 rows of the dataframe:")
+            print(df.iloc[idx:idx+5])
+            #Increment the index to show the next 5 rows
+            idx += 5
+        else:
+            break
+
     return df
 
 def time_stats(df):
