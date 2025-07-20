@@ -5,6 +5,28 @@ import matplotlib
 matplotlib.use('Agg')  # Use a non-GUI backend
 import matplotlib.pyplot as plt
 import os as os
+import tempfile
+
+def is_directory_writable(directory='.'):
+    """Check if the given directory is writable."""
+    try:
+        # Try to create a temporary file in the directory
+        test_file = os.path.join(directory, '.test_write_permission')
+        with open(test_file, 'w') as f:
+            f.write('test')
+        os.remove(test_file)
+        return True
+    except (PermissionError, OSError):
+        return False
+
+def get_safe_save_path(filename):
+    """Get a safe path to save files, using temp directory if current directory is not writable."""
+    if is_directory_writable():
+        return filename
+    else:
+        # Use system temp directory as fallback
+        temp_dir = tempfile.gettempdir()
+        return os.path.join(temp_dir, filename)
 
 def list_available_files():
     ## Lists and return all available CSV files in the current directory.
@@ -146,7 +168,16 @@ def time_stats(df):
     ax3.set_ylabel('Frequency')
     ax3.set_xticks(ticks=np.arange(0, 24), labels=[f"{i}:00" for i in range(24)])
     #plt.show(block=False)
-    plt.savefig('time_stats.png')
+    save_path = get_safe_save_path('time_stats.png')
+    try:
+        plt.savefig(save_path)
+        print(f"Time statistics plot saved as '{save_path}'")
+    except PermissionError:
+        print(f"Warning: Could not save to '{save_path}' - permission denied")
+    except Exception as e:
+        print(f"Warning: Could not save plot due to error: {e}")
+    finally:
+        plt.close(fig1)  # Close the figure to free memory
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
     print('_'*40)
   
@@ -207,7 +238,16 @@ def trip_duration_stats(df):
     ax4.set_xlabel('Trip Duration (seconds)')
     ax4.set_ylabel('Frequency')
     #plt.show()
-    plt.savefig('trip_duration_stats.png')
+    save_path = get_safe_save_path('trip_duration_stats.png')
+    try:
+        plt.savefig(save_path)
+        print(f"Trip duration plot saved as '{save_path}'")
+    except PermissionError:
+        print(f"Warning: Could not save to '{save_path}' - permission denied")
+    except Exception as e:
+        print(f"Warning: Could not save plot due to error: {e}")
+    finally:
+        plt.close(fig2)  # Close the figure to free memory
 
     #End the timer and print the time taken
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
