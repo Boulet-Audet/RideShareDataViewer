@@ -1,6 +1,8 @@
 import time
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Use a non-GUI backend
 import matplotlib.pyplot as plt
 import os as os
 
@@ -115,7 +117,7 @@ def time_stats(df):
     ax1.set_ylabel('Frequency')
     ax1.set_xlabel('Month')
     ax1.set_xticks(ticks=np.arange(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-    plt.show(block=False)
+    #plt.show(block=False)
 
     # display the most common day of week
     df['day_of_week'] = df['Start Time'].dt.day_name()
@@ -129,7 +131,7 @@ def time_stats(df):
     ax2.set_title('Days of Week Histogram')
     ax2.set_ylabel('Frequency')
     ax2.set_xlabel('Day of Week')
-    plt.show(block=False)
+    #plt.show(block=False)
 
     # display the most common start hour
     df['hour'] = df['Start Time'].dt.hour
@@ -143,7 +145,8 @@ def time_stats(df):
     ax3.set_xlabel('Hour of Day')
     ax3.set_ylabel('Frequency')
     ax3.set_xticks(ticks=np.arange(0, 24), labels=[f"{i}:00" for i in range(24)])
-    plt.show(block=False)
+    #plt.show(block=False)
+    plt.savefig('time_stats.png')
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
     print('_'*40)
   
@@ -203,7 +206,9 @@ def trip_duration_stats(df):
     ax4.set_title('Trip Duration Histogram')
     ax4.set_xlabel('Trip Duration (seconds)')
     ax4.set_ylabel('Frequency')
-    plt.show()
+    #plt.show()
+    plt.savefig('trip_duration_stats.png')
+
     #End the timer and print the time taken
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
     print('_'*40)
