@@ -8,7 +8,7 @@ import os as os
 import tempfile
 
 def is_directory_writable(directory='.'):
-    """Check if the given directory is writable."""
+    #Check if the given directory is writable.
     try:
         # Try to create a temporary file in the directory
         test_file = os.path.join(directory, '.test_write_permission')
@@ -237,7 +237,7 @@ def trip_duration_stats(df):
     ax4.set_title('Trip Duration Histogram')
     ax4.set_xlabel('Trip Duration (seconds)')
     ax4.set_ylabel('Frequency')
-    #plt.show()
+    plt.show()
     save_path = get_safe_save_path('trip_duration_stats.png')
     try:
         plt.savefig(save_path)
