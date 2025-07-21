@@ -8,7 +8,7 @@ import os as os
 import tempfile
 
 def is_directory_writable(directory='.'):
-    #Check if the given directory is writable.
+    #Check if the given directory is writablewith a test file.
     try:
         # Try to create a temporary file in the directory
         test_file = os.path.join(directory, '.test_write_permission')
@@ -20,7 +20,7 @@ def is_directory_writable(directory='.'):
         return False
 
 def get_safe_save_path(filename):
-    """Get a safe path to save files, using temp directory if current directory is not writable."""
+    #Get a safe path to save files, using temp directory if current directory is not writable.
     if is_directory_writable():
         return filename
     else:
@@ -125,59 +125,29 @@ def time_stats(df):
     print('\nCalculating The Most Frequent Times of Travel...\n')
     start_time = time.time()
 
-    # display the most common month
-    df['month'] = df['Start Time'].dt.month
-    most_common_month = df['month'].mode()[0]
-    print(f"The most common month is: {most_common_month}")
-    #Creates the Figure
-    fig1 = plt.figure(figsize=(10, 6))
-    #Creates a new subplot for the months
-    ax1 = fig1.add_subplot(221)
-    #Plot the histogram of the most common months in the first subplot
-    df['month'].hist(bins=12, edgecolor='black', ax=ax1)
-    ax1.set_title('Months Histogram')
-    ax1.set_ylabel('Frequency')
-    ax1.set_xlabel('Month')
-    ax1.set_xticks(ticks=np.arange(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-    #plt.show(block=False)
-
-    # display the most common day of week
-    df['day_of_week'] = df['Start Time'].dt.day_name()
-    most_common_day = df['day_of_week'].mode()[0]
-    print(f"The most common day of week is: {most_common_day}")
-    #Creates a new graph for the days of the week 
-    ax2 = fig1.add_subplot(222)
-    #Plot the histogram of the most common months
-    df['day_of_week'].value_counts().plot(kind='bar', color='skyblue', edgecolor='black',ax=ax2)
-    # Set the title and labels
-    ax2.set_title('Days of Week Histogram')
-    ax2.set_ylabel('Frequency')
-    ax2.set_xlabel('Day of Week')
-    #plt.show(block=False)
-
-    # display the most common start hour
-    df['hour'] = df['Start Time'].dt.hour
-    most_common_hour = df['hour'].mode()[0]
-    print(f"The most common start hour is: {most_common_hour}")
-    #Creates a new graph for the hours
-    ax3 = fig1.add_subplot(223)
-    #Plot the histogram of the most common hours
-    df['hour'].hist(bins=24, edgecolor='black', ax=ax3)
-    ax3.set_title('Hours Histogram')
-    ax3.set_xlabel('Hour of Day')
-    ax3.set_ylabel('Frequency')
-    ax3.set_xticks(ticks=np.arange(0, 24), labels=[f"{i}:00" for i in range(24)])
-    #plt.show(block=False)
-    save_path = get_safe_save_path('time_stats.png')
     try:
-        plt.savefig(save_path)
-        print(f"Time statistics plot saved as '{save_path}'")
-    except PermissionError:
-        print(f"Warning: Could not save to '{save_path}' - permission denied")
+        # display the most common month
+        df['month'] = df['Start Time'].dt.month
+        most_common_month = df['month'].mode()[0]
+        print(f"The most common month is: {most_common_month}")
+        #Creates the Figure
+        fig1 = plt.figure(figsize=(10, 6))
+        #Creates a new subplot for the months
+        ax1 = fig1.add_subplot(221)
+        #Plot the histogram of the most common months in the first subplot
+        df['month'].hist(bins=12, edgecolor='black', ax=ax1)
+        ax1.set_title('Months Histogram')
+        ax1.set_ylabel('Frequency')
+        ax1.set_xlabel('Month')
+        ax1.set_xticks(ticks=np.arange(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+        #plt.show(block=False) #Uncomment this to display the plot
+    except KeyError:
+        print("Error: 'Start Time' column is missing from the data.")
     except Exception as e:
         print(f"Warning: Could not save plot due to error: {e}")
     finally:
-        plt.close(fig1)  # Close the figure to free memory
+        if 'fig1' in locals() and fig1:
+            plt.close(fig1)  # Close the figure to free memory
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
     print('_'*40)
   
@@ -188,21 +158,29 @@ def station_stats(df):
     #Start the timer
     start_time = time.time()
 
-    # display most commonly used start station
-    start_station_mode0 = df['Start Station'].mode()[0]
-    print(f"The most commonly used start station is: {start_station_mode0}")
+    try:
+        # display most commonly used start station
+        start_station_mode0 = df['Start Station'].mode()[0]
+        print(f"The most commonly used start station is: {start_station_mode0}")
 
-    # display most commonly used end station
-    end_station_mode0 = df['End Station'].mode()[0]
-    print(f"The most commonly used end station is: {end_station_mode0}")
+        # display most commonly used end station
+        end_station_mode0 = df['End Station'].mode()[0]
+        print(f"The most commonly used end station is: {end_station_mode0}")
 
-    #Create a new series in the data frame that combines the start and end stations
-    df['Start to End Station'] = df['Start Station'] + " to " + df['End Station']
+        #Create a new series in the data frame that combines the start and end stations
+        df['Start to End Station'] = df['Start Station'] + " to " + df['End Station']
 
-    # display most frequent combination of start station and end station trip
-    Start_to_end_station_mode0 = df['Start to End Station'].mode()[0]
-    #Print the mode common combination of start to end station
-    print(f"The most common start to end station is: {Start_to_end_station_mode0}")
+        # display most frequent combination of start station and end station trip
+        Start_to_end_station_mode0 = df['Start to End Station'].mode()[0]
+        #Print the mode common combination of start to end station
+        print(f"The most common start to end station is: {Start_to_end_station_mode0}")
+    except KeyError:
+        print("Error: 'Start Station' column is missing from the data.")
+    except Exception as e:
+        print(f"Warning: Could not save plot due to error: {e}")
+    finally:
+        if 'fig1' in locals() and fig1:
+            plt.close(fig1)  # Close the figure to free memory
 
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
     print('_'*40)
@@ -237,7 +215,7 @@ def trip_duration_stats(df):
     ax4.set_title('Trip Duration Histogram')
     ax4.set_xlabel('Trip Duration (seconds)')
     ax4.set_ylabel('Frequency')
-    plt.show()
+    #plt.show() #Uncomment this to display the plot
     save_path = get_safe_save_path('trip_duration_stats.png')
     try:
         plt.savefig(save_path)
