@@ -2,7 +2,7 @@ import time
 import pandas as pd
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  # Use a non-GUI backend
+matplotlib.use('Agg')  # Use a non-GUI backend 
 import matplotlib.pyplot as plt
 import os as os
 import tempfile
@@ -139,7 +139,7 @@ def time_stats(df):
         ax1.set_title('Months Histogram')
         ax1.set_ylabel('Frequency')
         ax1.set_xlabel('Month')
-        ax1.set_xticks(ticks=np.arange(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+        #ax1.set_xticks(ticks=np.arange(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
         #plt.show(block=False) #Uncomment this to display the plot
     except KeyError:
         print("Error: 'Start Time' column is missing from the data.")
@@ -229,7 +229,7 @@ def trip_duration_stats(df):
 
     #End the timer and print the time taken
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
-    print('_'*40)
+    print('_'*30)
 
 
 def user_stats(df):
