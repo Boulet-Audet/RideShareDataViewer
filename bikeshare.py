@@ -72,7 +72,7 @@ def get_filters(csvfiles):
 
     # get user input for day of week (all, monday, tuesday, ... sunday)
     day = input("Please enter the day of the week you want to analyze (all, monday, tuesday, ... sunday): ").lower()
-    #Check that the day is valid and if not, raise an error if not valid and set the filter to 'all' by default
+    #Check that the day is valid and if not set the filter to 'all' by default
     days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday','all']
     if day not in days:
         print(f"Invalid day: {day}. Day filter set to 'all' by default.")
