@@ -32,12 +32,14 @@ def list_available_files():
     ## Lists and return all available CSV files in the current directory.
     csvfiles = [f for f in os.listdir('.') if os.path.isfile(f) and f.endswith('.csv')]
     if not csvfiles:
-        raise FileNotFoundError("No CSV files found in the current directory.")
-    print("Available CSV files:")
-    for file in csvfiles:
-        print(file)
-    print("Please select a file from the list of CSV above in the current working directory.")
-    return csvfiles
+        print("No CSV files found in the current directory. Add CSV files to the current directory and try again.")
+        exit()
+    else:
+        print("Available CSV files:")
+        for file in csvfiles:
+            print(file)
+        print(f"Total number of files: {len(csvfiles)}")
+        return csvfiles
 
 
 def get_filters(csvfiles):
@@ -48,25 +50,35 @@ def get_filters(csvfiles):
 
     # print('Explore some US bikeshare data from the CSV files listed above.')
     # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
-    cityFile = input("Please enter the city csv file you want to analyze from the list above ").lower()
+    cityFile = input("Please enter the city csv file you want to analyze from the list above:").lower()
     #Adds the .csv extension if it dones't exists
     if not cityFile.endswith('.csv'):
         cityFile = cityFile + ".csv"
     
     #Check if the city file exists in the current directory
     if cityFile not in csvfiles:
-        raise ValueError(f"The file {cityFile} is not available in the current directory. Please select from the available files: {csvfiles}")
-
+        print(f"The file {cityFile} is not available in the current directory. Please select from the available files: {csvfiles}")
+        return None, None, None
     #Replace the spaces with underscores
     cityFile = cityFile.replace(" ", "_")
 
     # get user input for month (all, january, february, ... , december)
     month = input("Please enter the month you want to analyze (all, january, february, ... , december): ").lower()
+    #Check if the month is valid and if not, set the filter to 'all' by default
+    months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december','all']
+    if month not in months:
+        print(f"Invalid month: {month}. Month filter set to 'all' by default.")
+        month = 'all'
 
     # get user input for day of week (all, monday, tuesday, ... sunday)
     day = input("Please enter the day of the week you want to analyze (all, monday, tuesday, ... sunday): ").lower()
+    #Check that the day is valid and if not, raise an error if not valid and set the filter to 'all' by default
+    days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday','all']
+    if day not in days:
+        print(f"Invalid day: {day}. Day filter set to 'all' by default.")
+        day = 'all'
 
-    return cityFile, month, day
+    return cityFile, month, day # Returns the city file, month, and day filters
 
 
 def load_data(cityFile, month, day):
@@ -74,8 +86,11 @@ def load_data(cityFile, month, day):
     #   (str) cityFile - name of the city to analyze
     #   (str) month - name of the month to filter by, or "all" to apply no month filter
     #   (str) day - name of the day of week to filter by, or "all" to apply no day filter
-    # Returns:
-    #    df - Pandas DataFrame containing city data filtered by month and day
+    # Check that the file is valid and if not, return None
+    if cityFile is None:
+        print("No data available for the specified file.")
+        return None
+
     df = pd.read_csv(cityFile)
     df['Start Time'] = pd.to_datetime(df['Start Time'])
     #Filter out the month if specified except 'all'
@@ -83,28 +98,33 @@ def load_data(cityFile, month, day):
         months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
         # Convert month name to index from 1 to 12
         if month not in months:
-            raise ValueError(f"Invalid month: {month}. Please choose from {months}.")
-        # Get the month index (1-12) and filter the DataFrame
-        month_index = months.index(month) + 1
-        df = df[df['Start Time'].dt.month == month_index]
+            #Set ravlue to all if the month is not valid
+            month = 'all'
+        else:# Get the month index (1-12) and filter the DataFrame
+            month_index = months.index(month) + 1
+            df = df[df['Start Time'].dt.month == month_index]
     #Filter out the day if specified except 'all'
     if day != 'all':
         days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
         if day not in days:
-            raise ValueError(f"Invalid day: {day}. Please choose from {days}.")
-        # Get the day index (0-6) and filter the DataFrame
-        day_index = days.index(day)
-        # Convert day name to index from 0 to 6
-        df2 = df['Start Time'].dt.dayofweek
-        # Filter the DataFrame based on the day index
-        df = df[df['Start Time'].dt.dayofweek == day_index]
+            day = 'all'
+        else:
+            # Get the day index (0-6) and filter the DataFrame
+            day_index = days.index(day)
+            # Convert day name to index from 0 to 6
+            df2 = df['Start Time'].dt.dayofweek
+            # Filter the DataFrame based on the day index
+            df = df[df['Start Time'].dt.dayofweek == day_index]
     #Returns the dataframe after filtering
     if df.empty:
-        raise ValueError("No data available for the specified filters. Please try different filters.")
-    print(f"Data loaded successfully from {cityFile}.")
-    print(f"DataFrame shape: {df.shape}")
+        print("No data available for the specified file and filters. Please try different file or filter day/month filter.")
+        #End the function
+        return None
+    else:
+        print(f"Data loaded successfully from {cityFile}.")
+        print(f"DataFrame shape: {df.shape}")
 
-    #Set the head index to 0
+    #Set the head index to 0 to initialize the loop.
     idx = 0
     #Prompt the user to display the first 5 rows of the dataframe
     while True and idx < len(df):
@@ -117,9 +137,13 @@ def load_data(cityFile, month, day):
         else:
             break
 
-    return df
+    return df # Returns the no empty dataframe after filtering
 
 def time_stats(df):
+    if df is None:
+        print("No data available to calculate time statistics.")
+        return None
+    
     # Displays statistics on the most frequent times of travel.
     print('\nCalculating The Most Frequent Times of Travel...\n')
     start_time = time.time()
@@ -152,6 +176,9 @@ def time_stats(df):
   
 
 def station_stats(df):
+    if df is None:
+        print("No data available to calculate station statistics.")
+        return None
     #Displays statistics on the most popular stations and trip.
     print('\nCalculating The Most Popular Stations and Trip...\n')
     #Start the timer
@@ -186,6 +213,14 @@ def station_stats(df):
 
 
 def trip_duration_stats(df):
+    if df is None:
+        print("No data available to calculate trip duration statistics.")
+        return None
+    
+    if 'Trip Duration' not in df.columns:
+        print("No duration data available to calculate trip duration statistics.")
+        return None
+    
     #Displays statistics on the total and average trip duration.
     print('\nCalculating Trip Duration...\n')
     #Start the timer
@@ -232,6 +267,13 @@ def trip_duration_stats(df):
 
 
 def user_stats(df):
+    if df is None:
+        print("No data available to calculate user statistics.")
+        return None
+    if 'User Type' not in df.columns:
+        print("No user type data available to calculate user statistics.")
+        return None
+    
     #Displays statistics on bikeshare users.
     print('\nCalculating User Stats...\n')
     start_time = time.time()
@@ -270,19 +312,18 @@ def main():
         cityFile, month, day = get_filters(csvfiles)
         #Load the data based on the user's input
         df = load_data(cityFile, month, day)
+
         #Calculate and display the time statistics
         time_stats(df)
         #Calculate and display the station statistics
         station_stats(df)
         #Calculate and display the trip duration statistics
-        if 'Trip Duration' in df.columns:
-            trip_duration_stats(df)
+        trip_duration_stats(df)
         #Calculate and display the user statistics
-        if 'User Type' in df.columns:
-            user_stats(df)
+        user_stats(df)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
-        if restart.lower() != 'yes':
+        if restart.lower() != 'yes' and restart.lower() != 'y':
             break
 
 
