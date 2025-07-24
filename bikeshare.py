@@ -89,7 +89,7 @@ def load_data(cityFile, month, day):
     # Check that the file is valid and if not, return None
     if cityFile is None:
         print("No data available for the specified file.")
-        return None
+        return None # Returns None if the file is not valid instead of the dataframe
 
     df = pd.read_csv(cityFile)
     df['Start Time'] = pd.to_datetime(df['Start Time'])
@@ -112,7 +112,7 @@ def load_data(cityFile, month, day):
             # Get the day index (0-6) and filter the DataFrame
             day_index = days.index(day)
             # Convert day name to index from 0 to 6
-            df2 = df['Start Time'].dt.dayofweek
+            # df2 = df['Start Time'].dt.dayofweek #Uncomment this to see the day of the week in the dataframe
             # Filter the DataFrame based on the day index
             df = df[df['Start Time'].dt.dayofweek == day_index]
     #Returns the dataframe after filtering
@@ -121,8 +121,8 @@ def load_data(cityFile, month, day):
         #End the function
         return None
     else:
-        print(f"Data loaded successfully from {cityFile}.")
-        print(f"DataFrame shape: {df.shape}")
+        print(f"Data loaded successfully from {cityFile}. of {df.shape[0]} rows and {df.shape[1]} columns.")
+
 
     #Set the head index to 0 to initialize the loop.
     idx = 0
@@ -171,8 +171,8 @@ def time_stats(df):
     finally:
         if 'fig1' in locals() and fig1:
             plt.close(fig1)  # Close the figure to free memory
-    print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
-    print('_'*40)
+        print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
+        print('_'*40)
   
 
 def station_stats(df):
@@ -207,7 +207,6 @@ def station_stats(df):
     finally:
         if 'fig1' in locals() and fig1:
             plt.close(fig1)  # Close the figure to free memory
-
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
     print('_'*40)
 
