@@ -41,7 +41,6 @@ def list_available_files():
         print(f"Total number of files: {len(csvfiles)}")
         return csvfiles
 
-
 def get_filters(csvfiles):
     # Asks user to specify a city, month, and day to analyze.
     #   (str) city - name of the city to analyze
@@ -136,7 +135,6 @@ def load_data(cityFile, month, day):
             idx += 5
         else:
             break
-
     return df # Returns the no empty dataframe after filtering
 
 def time_stats(df):
@@ -172,7 +170,7 @@ def time_stats(df):
         if 'fig1' in locals() and fig1:
             plt.close(fig1)  # Close the figure to free memory
         print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
-        print('_'*40)
+
   
 
 def station_stats(df):
@@ -208,7 +206,7 @@ def station_stats(df):
         if 'fig1' in locals() and fig1:
             plt.close(fig1)  # Close the figure to free memory
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
-    print('_'*40)
+
 
 
 def trip_duration_stats(df):
@@ -262,7 +260,6 @@ def trip_duration_stats(df):
 
     #End the timer and print the time taken
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
-    print('_'*30)
 
 
 def user_stats(df):
@@ -300,7 +297,7 @@ def user_stats(df):
         print("No Birth Year data available.")
 
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
-    print('_'*40)
+
 
 def main():
     while True:
@@ -322,7 +319,6 @@ def main():
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes' and restart.lower() != 'y':
             break
-
 if __name__ == "__main__":
     #Loads the main function to start the program
 	main()
