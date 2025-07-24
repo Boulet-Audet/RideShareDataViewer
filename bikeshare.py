@@ -2,7 +2,7 @@ import time
 import pandas as pd
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  # Use a non-GUI backend 
+#matplotlib.use('Agg')  # Use a non-GUI backend 
 import matplotlib.pyplot as plt
 import os as os
 import tempfile
@@ -163,7 +163,7 @@ def time_stats(df):
         ax1.set_ylabel('Frequency')
         ax1.set_xlabel('Month')
         #ax1.set_xticks(ticks=np.arange(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-        #plt.show(block=False) #Uncomment this to display the plot
+        plt.show(block=False) #Uncomment this to display the plot
     except KeyError:
         print("Error: 'Start Time' column is missing from the data.")
     except Exception as e:
@@ -249,7 +249,7 @@ def trip_duration_stats(df):
     ax4.set_title('Trip Duration Histogram')
     ax4.set_xlabel('Trip Duration (seconds)')
     ax4.set_ylabel('Frequency')
-    #plt.show() #Uncomment this to display the plot
+    plt.show() #Uncomment this to display the plot
     save_path = get_safe_save_path('trip_duration_stats.png')
     try:
         plt.savefig(save_path)
@@ -282,7 +282,7 @@ def user_stats(df):
     user_types_value_counts = df['User Type'].value_counts()
     print(f"Counts of user types: {user_types_value_counts}")
 
-    # Display counts of gender
+    # Display counts of gender if available
     if 'Gender' in df.columns:
         gender_value_counts = df['Gender'].value_counts()
         print(f"Counts of gender: {gender_value_counts}")
@@ -303,7 +303,6 @@ def user_stats(df):
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
     print('_'*40)
 
-
 def main():
     while True:
         #Find and list the available CSV files in the current directory
@@ -312,7 +311,6 @@ def main():
         cityFile, month, day = get_filters(csvfiles)
         #Load the data based on the user's input
         df = load_data(cityFile, month, day)
-
         #Calculate and display the time statistics
         time_stats(df)
         #Calculate and display the station statistics
@@ -325,7 +323,6 @@ def main():
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes' and restart.lower() != 'y':
             break
-
 
 if __name__ == "__main__":
     #Loads the main function to start the program
