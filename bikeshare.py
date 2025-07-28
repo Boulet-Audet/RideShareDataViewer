@@ -171,8 +171,6 @@ def time_stats(df):
             plt.close(fig1)  # Close the figure to free memory
         print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
 
-  
-
 def station_stats(df):
     if df is None:
         print("No data available to calculate station statistics.")
@@ -206,7 +204,6 @@ def station_stats(df):
         if 'fig1' in locals() and fig1:
             plt.close(fig1)  # Close the figure to free memory
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
-
 
 
 def trip_duration_stats(df):
@@ -297,7 +294,6 @@ def user_stats(df):
         print("No Birth Year data available.")
 
     print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
-
 
 def main():
     while True:
