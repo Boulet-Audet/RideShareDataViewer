@@ -46,8 +46,6 @@ def get_filters(csvfiles):
     #(str) city - name of the city to analyze
     #(str) month - name of the month to filter by, or "all" to apply no month filter
     #(str) day - name of the day of week to filter by, or "all" to apply no day filter
-
-    # print('Explore some US bikeshare data from the CSV files listed above.')
     # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
     cityFile = input("Please enter the city csv file you want to analyze from the list above:").lower()
     #Adds the .csv extension if it dones't exists
@@ -122,7 +120,6 @@ def load_data(cityFile, month, day):
     else:
         print(f"Data loaded successfully from {cityFile}. of {df.shape[0]} rows and {df.shape[1]} columns.")
 
-
     #Set the head index to 0 to initialize the loop.
     idx = 0
     #Prompt the user to display the first 5 rows of the dataframe
@@ -171,7 +168,6 @@ def time_stats(df):
             plt.close(fig1)  # Close the figure to free memory
         print(f"\nThis took {((time.time() - start_time) * 1000):.1f} ms.")
 
-  
 
 def station_stats(df):
     if df is None:
